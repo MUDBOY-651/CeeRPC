@@ -8,12 +8,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CEERPC_INCLUDE_DIR "src/include")
-set(CEERPC_UTIL_DIR "src/util")
+set(CEERPC_SRC_DIR "src")
+
+# protobuf include headers
+find_package(Protobuf REQUIRED)
+include_directories(
+  ${Protobuf_INCLUDE_DIRS}
+)
 
 include_directories(
   "./"
   "${CEERPC_INCLUDE_DIR}"
-  "${CEERPC_UTIL_DIR}"
+  "${CEERPC_SRC_DIR}"
 )
 
 file(GLOB_RECURSE SOURCES src/*.cpp)

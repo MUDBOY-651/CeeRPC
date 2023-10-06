@@ -11,12 +11,12 @@ const char* Status::CopyState(const char* state) {
   return result;
 }
 
-Status::Status(Code code, std::string& msg) {
-  const uint32_t size = static_cast<uint32_t>(msg.size());
+Status::Status(Code code, const char* msg) {
+  const uint32_t size = static_cast<uint32_t>(strlen(msg));
   char* result = new char[size + 5];
   std::memcpy(result, &size, sizeof(size));
   result[4] = static_cast<char>(code);
-  std::memcpy(result + 5, msg.data(), size);
+  std::memcpy(result + 5, msg, size);
   state_ = result;
 }
 

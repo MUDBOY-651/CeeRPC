@@ -6,13 +6,35 @@ namespace ceerpc {
 
 class Status {
 public:
+  Status() noexcept: state_(nullptr) {}
   Status(const Status& rhs);
   Status& operator=(const Status& rhs);
 
   Status(Status&& rhs) noexcept: state_(rhs.state_) {rhs.state_ = nullptr;}
   Status& operator=(Status&& rhs) noexcept;
 
-  bool OK() { return state_ == nullptr; }
+  // Return a success status.
+  static Status OK() { return Status(); }
+
+  // Return error status of an appropriate type.
+  static Status NotFound(const char* msg) {
+    return Status(kNotFound, msg);
+  }
+  static Status Corruption(const char* msg) {
+    return Status(kCorruption, msg);
+  }
+  static Status NotSupported(const char* msg) {
+    return Status(kNotSupported, msg);
+  }
+  static Status InvalidArgument(const char* msg) {
+    return Status(kInvalidArgument, msg);
+  }
+  static Status IOError(const char* msg) {
+    return Status(kIOError, msg);
+  }
+
+  bool ok() const { return state_ == nullptr; }
+
   // Returns true iff the status indicates a NotFound error.
   bool IsNotFound() const { return code() == kNotFound; }
 
@@ -27,6 +49,7 @@ public:
 
   // Returns true iff the status indicates an InvalidArgument.
   bool IsInvalidArgument() const { return code() == kInvalidArgument; }
+  std::string ToString() const;
 
 private:
   enum Code {
@@ -41,8 +64,7 @@ private:
     return (state_ == nullptr) ? kOk : static_cast<Code>(state_[4]);
   }
   static const char *CopyState(const char *state);
-  Status(Code code, std::string &msg) ;
-  std::string ToString() const;
+  Status(Code code, const char* msg) ;
   // OK status has a null state_.  Otherwise, state_ is a new[] array
   // of the following form:
   //    state_[0..3] == length of message

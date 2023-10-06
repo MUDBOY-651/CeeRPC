@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package test;
+
+message TwoSumRequest {
+  optional int32 a = 1;
+  optional int32 b = 2;
+}
+
+message TwoSumResponse {
+  optional int32 sum = 1;
+}
+
